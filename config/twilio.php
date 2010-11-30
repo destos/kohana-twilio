@@ -3,4 +3,6 @@ return array
 (
 	'AccountSid' => 'Yours-Here',
 	'AuthToken' => 'Yours-Here',
+	'AppNumber' => '(555) 555-5555',
+	'ApiUrl' => 'https://api.twilio.com/2010-04-01',
 );
