@@ -53,13 +53,8 @@ class Twilio_Rest_Client
 	{
 		$fp = null;
 		$tmpfile = "";
-/*
-		foreach ($vars as $key=>$value)
-			$encoded .= "$key=".urlencode($value)."&";
-		$encoded = substr($encoded, 0, -1);
-*/
 		
-		http_build_query( $vars );
+		$encoded = http_build_query( $vars );
 		
 		// construct full url
 		$url = "{$this->Endpoint}$path";
@@ -67,7 +62,9 @@ class Twilio_Rest_Client
 		// if GET and vars, append them
 		if ($method == "GET")
 			$url .= (FALSE === strpos($path, '?')?"?":"&").$encoded;
-
+		
+		Kohana::$log->add( Kohana::DEBUG, "Twilio REST url: $url" );
+		
 		// initialize a new curl object
 		$curl = curl_init($url);
 		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
@@ -102,7 +99,7 @@ class Twilio_Rest_Client
 
 		// send credentials
 		curl_setopt($curl, CURLOPT_USERPWD,
-			$pwd = "{$this->AccountSid}:{$this->AuthToken}");
+			$pwd = "{$this->config->AccountSid}:{$this->config->AuthToken}");
 
 		// do the request. If FALSE, then an exception occurred
 		if (FALSE === ($result = curl_exec($curl)))
