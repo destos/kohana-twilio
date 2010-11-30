@@ -8,15 +8,10 @@ class Controller_Twilio extends Controller {
 	
 	public $get = false;
 	
-	public function before(){
-			
-		// Load in twillio classes
-		require Kohana::find_file('vendor', 'twilio/twilio');
+	public function before(){	
 		
-		$config = Kohana::config('twilio');
-		
-		$this->tw_client = new TwilioRestClient($config['AccountSid'], $config['AuthToken']);
-		$this->tw_response = new Response();
+		$this->tw_client = new Twilio_Rest_Client();
+		$this->tw_response = new Twilio_Response();
 
 		// setup posted variables
 		if(!empty($_POST)){
@@ -36,6 +31,7 @@ class Controller_Twilio extends Controller {
 	{
 		if ($this->auto_respond === TRUE)
 		{
+			$this->request->headers['Content-Type'] = File::mime_by_ext('xml');
 			$this->request->response = $this->tw_response->Respond();
 		}
 
