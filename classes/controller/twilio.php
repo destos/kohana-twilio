@@ -3,7 +3,11 @@
 class Controller_Twilio extends Controller {
 	
 	public $auto_respond = TRUE;
-
+	
+	public $post = false;
+	
+	public $get = false;
+	
 	public function before(){
 			
 		// Load in twillio classes
@@ -13,8 +17,17 @@ class Controller_Twilio extends Controller {
 		
 		$this->tw_client = new TwilioRestClient($config['AccountSid'], $config['AuthToken']);
 		$this->tw_response = new Response();
-		
+
 		// setup posted variables
+		if(!empty($_POST)){
+			$this->post = (object) Security::xss_clean($_POST);
+			unset($_POST);
+		}
+		
+		if(!empty($_GET)){
+			$this->get = (object) Security::xss_clean($_GET);
+			unset($_GET);
+		}
 		
 		return parent::before();
 	}
