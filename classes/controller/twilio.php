@@ -10,8 +10,7 @@ class Controller_Twilio extends Controller {
 	
 	public function before(){	
 		
-		$this->tw_client = new Twilio_Rest_Client();
-		$this->tw_response = new Twilio_Response();
+		$this->response = new Twilio_Response();
 
 		// setup posted variables
 		if(!empty($_POST)){
@@ -26,17 +25,27 @@ class Controller_Twilio extends Controller {
 		
 		return parent::before();
 	}
-
+	
+	// check status of sent sms.
+	public function action_sms_status(){
+	
+		// log sms status		
+		if($this->post)
+			Kohana::$log->add( Kohana::DEBUG, "SmsStatus for {$this->post->SmsSid}:{$this->post->SmsStatus}" );
+		
+		$this->auto_respond == false;
+	}
+	
 	public function after()
 	{
 		if ($this->auto_respond === TRUE)
 		{
 			$this->request->headers['Content-Type'] = File::mime_by_ext('xml');
-			$this->request->response = $this->tw_response->Respond();
+			$this->request->response = $this->response->Respond();
 		}
 
 		return parent::after();
 	}
-
+	
 	
 }

@@ -10,8 +10,18 @@
 class Twilio_Rest_Client
 {
 
-	protected $AccountSid;
-	protected $AuthToken;
+	protected static $_instance;
+	
+	public static function instance()
+	{
+		if (self::$_instance === NULL)
+		{
+			// Create a new instance
+			self::$_instance = new self;
+		}
+		
+		return self::$_instance;
+	}
 
 	/*
 	* __construct
@@ -28,17 +38,12 @@ class Twilio_Rest_Client
 		
 		// instead check for curl module
 		
-		$this->config = (object) Kohana::config('twilio');
+		//$this->config = (object) Kohana::config('twilio');
 		
-		#$this->config->AccountSid = $accountSid;
-		#$this->config->AuthToken = $authToken;
+		#Twilio::$AccountSid = $accountSid;
+		#Twilio::$AuthToken = $authToken;
 		
-		$this->Endpoint = "{$this->config->ApiUrl}/Accounts/{$this->config->AccountSid}/";
-	}
-
-	public function something()
-	{
-	
+		$this->Endpoint = Twilio::$ApiUrl."/Accounts/".Twilio::$AccountSid."/";
 	}
 	
 	/*
@@ -54,14 +59,18 @@ class Twilio_Rest_Client
 		$fp = null;
 		$tmpfile = "";
 		
-		$encoded = http_build_query( $vars );
+		$query = http_build_query( $vars );
 		
 		// construct full url
 		$url = "{$this->Endpoint}$path";
 
 		// if GET and vars, append them
-		if ($method == "GET")
-			$url .= (FALSE === strpos($path, '?')?"?":"&").$encoded;
+		
+		if(!empty($query))
+			$url .= '?'.$query;
+			
+		//if ($method == "GET")
+			//$url .= (FALSE === strpos($path, '?')?"?":"&").$query;
 		
 		Kohana::$log->add( Kohana::DEBUG, "Twilio REST url: $url" );
 		
@@ -76,14 +85,14 @@ class Twilio_Rest_Client
 			break;
 		case "POST":
 			curl_setopt($curl, CURLOPT_POST, TRUE);
-			curl_setopt($curl, CURLOPT_POSTFIELDS, $encoded);
+			curl_setopt($curl, CURLOPT_POSTFIELDS, $query);
 			break;
 		case "PUT":
 			// curl_setopt($curl, CURLOPT_PUT, TRUE);
-			curl_setopt($curl, CURLOPT_POSTFIELDS, $encoded);
+			curl_setopt($curl, CURLOPT_POSTFIELDS, $query);
 			curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
 			file_put_contents($tmpfile = tempnam("/tmp", "put_"),
-				$encoded);
+				$query);
 			curl_setopt($curl, CURLOPT_INFILE, $fp = fopen($tmpfile,
 					'r'));
 			curl_setopt($curl, CURLOPT_INFILESIZE,
@@ -99,7 +108,7 @@ class Twilio_Rest_Client
 
 		// send credentials
 		curl_setopt($curl, CURLOPT_USERPWD,
-			$pwd = "{$this->config->AccountSid}:{$this->config->AuthToken}");
+			$pwd = Twilio::$AccountSid.":".Twilio::$AuthToken);
 
 		// do the request. If FALSE, then an exception occurred
 		if (FALSE === ($result = curl_exec($curl)))

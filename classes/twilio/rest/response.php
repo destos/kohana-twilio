@@ -31,10 +31,12 @@ class Twilio_Rest_Response
 		if ($this->HttpStatus != 204)
 			$this->ResponseXml = @simplexml_load_string($text);
 
-		if ($this->IsError = ($status >= 400))
-			$this->ErrorMessage =
-				(string)$this->ResponseXml->RestException->Message;
+		if ($this->IsError = ($status >= 400)){
+			$this->ErrorMessage =	(string) $this->ResponseXml->RestException->Message;
+			Kohana::$log->add( Kohana::ERROR, "{$url} error :{$this->ErrorMessage}" );
+		}
 
 	}
 
 }
+
