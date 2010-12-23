@@ -53,7 +53,7 @@ class Twilio
 	//
 	
 	// Send SMS
-	static public function send_sms( $options )
+	public function send_sms( $options )
 	{
 		
 		$data = array(
