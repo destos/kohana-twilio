@@ -50,7 +50,7 @@ class Twilio
 	//private function 
 	// --------------------------------------------------------
 	// SMS
-	//
+	// TODO: add multiple sms send it longer than 160 char. toggleable
 	
 	// Send SMS
 	public function send_sms( $options )
@@ -60,7 +60,8 @@ class Twilio
 			'From' => self::$AppNumber,
 			'To' => false,
 			'Body' => false,
-			'StatusCallback' => false
+			'StatusCallback' => false,
+			'Limit' => true
 		);
 		
 		$data = Arr::merge( $data, (array) $options );
@@ -79,7 +80,13 @@ class Twilio
 			)), true);			
 		}
 		
+		//
+		if( (bool) $data['Limit'] and strlen($data['Body']) > 160 )
+			$data['Body'] = Text::limit_chars_left($data['Body'], 160 , '...');
+		
 		Kohana::$log->add( Kohana::DEBUG, "Attempting to send SMS : \"{$data['Body']}\" To: {$data['To']}" );
+		
+		unset($data['Limit']);
 		
 		$sent = Twilio_Rest_Client::instance()->request( "SMS/Messages", 'POST', $data );
 		
