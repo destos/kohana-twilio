@@ -1,4 +1,12 @@
 <?php defined('SYSPATH') or die('No direct script access.');
+/**
+ * Twilio Module
+ *
+ * @author Patrick Forringer
+ * @version 0.1
+ * @copyright mothtom, 5 May, 2011
+ * @package destos/twilio
+ **/
 
 class Twilio
 {
@@ -16,6 +24,12 @@ class Twilio
 	
 	public static $ApiUrl;
 	
+	/**
+	 * Returns same twilio instance
+	 *
+	 * @return self
+	 * @author Patrick Forringer
+	 **/
 	public static function instance()
 	{
 		if (self::$_instance === NULL)		{
@@ -27,7 +41,8 @@ class Twilio
 		return self::$_instance;
 	}
 	
-	public function __construct(){
+	public function __construct()
+	{
 						
 		$config = Kohana::config('twilio');
 		//Kohana_Config::instance()->load('twilio');
@@ -47,7 +62,6 @@ class Twilio
 		return new Twilio();
 	}
 	
-	//private function 
 	// --------------------------------------------------------
 	// SMS
 	// TODO: add multiple sms send it longer than 160 char. toggleable
