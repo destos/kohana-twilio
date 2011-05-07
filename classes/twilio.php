@@ -25,17 +25,17 @@ class Twilio
 	public static $ApiUrl;
 	
 	/**
-	 * Returns same twilio instance
+	 * Returns Twilio instance
 	 *
 	 * @return self
-	 * @author Patrick Forringer
 	 **/
+	
 	public static function instance()
 	{
 		if (self::$_instance === NULL)		{
 			Kohana::$log->add( Kohana::INFO, "Instantiating Twilio Class" );
 			// Create a new instance
-			self::$_instance = new self;
+			self::$_instance = self::factory();
 		}
 			
 		return self::$_instance;
@@ -47,6 +47,7 @@ class Twilio
 		$config = Kohana::config('twilio');
 		//Kohana_Config::instance()->load('twilio');
 		
+		#TODO do this more gracefully
 		//foreach( $config as $option => $val )
 		self::$AccountSid = $config->AccountSid;
 		self::$AuthToken = $config->AuthToken;
@@ -59,14 +60,16 @@ class Twilio
 	
 	public static function factory()
 	{
-		return new Twilio();
+		return new self;
 	}
 	
-	// --------------------------------------------------------
-	// SMS
-	// TODO: add multiple sms send it longer than 160 char. toggleable
+	/**
+	 * Send SMS
+	 *
+	 * @return new Twilio_Rest_Response
+	 **/
 	
-	// Send SMS
+	#TODO: add functionality/option to send multiple sms' if longer than 160 char.
 	public function send_sms( $options )
 	{
 		
@@ -104,7 +107,7 @@ class Twilio
 		
 		$sent = Twilio_Rest_Client::instance()->request( "SMS/Messages", 'POST', $data );
 		
-		//Apply DRY here
+		#TODO Apply DRY here
 		if( (bool) $sent->IsError ){
 			Kohana::$log->add( Kohana::ERROR, "SMS error :{$sent->ErrorMessage}" );
 		}
@@ -112,7 +115,12 @@ class Twilio
 		return $sent;
 	}
 	
-	// Get SMS
+	/**
+	 * Get SMS
+	 *
+	 * @return new Twilio_Rest_Response
+	 **/
+	
 	public function get_sms( $smsid = null ){
 		
 		if( empty($smsid) ){
@@ -121,21 +129,33 @@ class Twilio
 		}
 		
 		return Twilio_Rest_Client::instance()->request( "SMS/Messages/{$smsid}", 'GET' );
-		
 	}
 	
-	// --------------------------------------------------------
-	// Account
-	//
+	/**
+	 * Get Account
+	 *
+	 * @return new Twilio_Rest_Response
+	 **/
 	
 	public function get_account(){
 		return Twilio_Rest_Client::instance()->request( false, 'GET' );
 	}
 	
+	/**
+	 * Set Account Name
+	 * 
+	 * @return new Twilio_Rest_Response
+	 **/
+	
 	public function set_account_name( $name ){
 		return Twilio_Rest_Client::instance()->request( false, 'POST', array( 'FriendlyName' => $name ) );
 	}
 	
+	/**
+	 * Get Sandbox
+	 * 
+	 * @return new Twilio_Rest_Response
+	 **/
 	public function get_sandbox(){
 		return Twilio_Rest_Client::instance()->request( "Sandbox", 'GET' );
 	}
