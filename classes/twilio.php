@@ -2,10 +2,10 @@
 /**
  * Twilio Module
  *
- * @author Patrick Forringer
+ * @author Patrick Forringer, Twilio team
  * @version 0.1
  * @copyright mothtom, 5 May, 2011
- * @package destos/twilio
+ * @package Destos/Twilio
  **/
 
 class Twilio

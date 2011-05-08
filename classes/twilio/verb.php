@@ -1,11 +1,16 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-/*
-* Verb: Base class for all TwiML verbs used in creating Responses
-* Throws a TwilioException if an non-supported attribute or
-* attribute value is added to the verb. All methods in Verb are protected
-* or private
-*/
+/**
+ * Verb: Base class for all TwiML verbs used in creating Responses
+ * Throws a TwilioException if an non-supported attribute or
+ * attribute value is added to the verb. All methods in Verb are protected
+ * or private
+ *
+ * @author Patrick Forringer, Twilio team
+ * @version 0.1
+ * @copyright mothtom, 5 May, 2011
+ * @package Destos/Twilio
+ **/
 
 class Twilio_Verb
 {
